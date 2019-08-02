@@ -47,6 +47,8 @@ for postTags in allPostTags:
 for post in posts:
     if "html" in post:
         posts[posts.index(post)] = post[:post.index("html")]
+    elif "Signature" in post:
+        posts[posts.index(post)] = post[:post.index("Signature")]
 
 #Check that everything got scraped alright
 #print("\n".join(posts))
