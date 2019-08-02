@@ -61,6 +61,9 @@ path = Path("C:/Users/xande/Documents/DSAIL")
 postsBook = xlsxwriter.Workbook(path / "scrapeTest.xlsx")
 postsSheet = postsBook.add_worksheet()
 
+cell_format = postsBook.add_format({"text_wrap" : True})
+postsSheet.set_column(2, 2, 80, cell_format)
+
 postsSheet.write(0, 0, "Primary")
 postsSheet.write(0, 1, "Secondary")
 postsSheet.write(0, 2, "Reviews")
@@ -77,3 +80,4 @@ postsBook.close()
 
 end = time.time()
 print("Time elapsed: " + str(end - start) + " seconds")
+print("Sentences scraped: " + str(row))
