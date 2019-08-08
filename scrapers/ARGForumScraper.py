@@ -33,13 +33,13 @@ for link in links:
     curSoup = BeautifulSoup(requests.get(link).text, "html.parser")
     #Get only the first tag that contains a user post
     #Most replies don't give the information we need so we just visit the first link
-    postTags = curSoup.find("span", "postcolor")
-    allPostTags.append(postTags)
+    postTag = curSoup.find("span", "postcolor")
+    allPostTags.append(postTag)
 
 #Get all user posts as strings
 posts = []
-for postTags in allPostTags:
-    posts.append("".join(postTags.findAll(text=True)))
+for postTag in allPostTags:
+    posts.append("".join(postTag.findAll(text=True)))
 
 #Remove trash generated from signatures
 for post in posts:
