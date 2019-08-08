@@ -8,6 +8,7 @@ import time
 import xlsxwriter
 from pathlib import Path
 from nltk import tokenize
+import scrapers.scrapeUtils as scrap
 
 start = time.time()
 
@@ -21,10 +22,7 @@ linkTags = soup.find_all("a", "linkthru")
 
 #Get all links from relevant a tags
 #Can probably find a way to optimize the change from html entity to a string
-links = []
-for linkTag in linkTags:
-    link = linkTag['href']
-    links.append(link)
+links = scrap.linksFromTags(linkTags)
 
 #print("\n".join(map(str, links)))
 print("Retrieved " + str(len(links)) + " links")
@@ -33,15 +31,15 @@ allPostTags = []
 #Go to each link and prepare to scrape each page
 for link in links:
     curSoup = BeautifulSoup(requests.get(link).text, "html.parser")
-    #Get all tags that contain user posts
-    postTags = curSoup.find_all("span", "postcolor")
+    #Get only the first tag that contains a user post
+    #Most replies don't give the information we need so we just visit the first link
+    postTags = curSoup.find("span", "postcolor")
     allPostTags.append(postTags)
 
 #Get all user posts as strings
 posts = []
 for postTags in allPostTags:
-    for postTag in postTags:
-        posts.append("".join(postTag.findAll(text=True)))
+    posts.append("".join(postTags.findAll(text=True)))
 
 #Remove trash generated from signatures
 for post in posts:
@@ -59,27 +57,11 @@ for post in posts:
     splitPosts.append(tokenize.sent_tokenize(post))
 
 #Create an excel file to store the posts
-path = Path("C:/Users/xande/Documents/DSAIL")
-postsBook = xlsxwriter.Workbook(path / "scrapeTest.xlsx")
-postsSheet = postsBook.add_worksheet()
+postsBook, postsSheet = scrap.createDSAILsheet("argScrape.xlsx")
 
-cell_format = postsBook.add_format({"text_wrap" : True})
-postsSheet.set_column(2, 2, 80, cell_format)
-
-postsSheet.write(0, 0, "Primary")
-postsSheet.write(0, 1, "Secondary")
-postsSheet.write(0, 2, "Reviews")
-
-col = 2
-row = 1
-
-for splitPost in splitPosts:
-    for post in splitPost:
-        postsSheet.write(row, col, post)
-        row += 1
+scrap.postListToSheet(splitPosts, postsSheet)
 
 postsBook.close()
 
 end = time.time()
 print("Time elapsed: " + str(end - start) + " seconds")
-print("Sentences scraped: " + str(row))
