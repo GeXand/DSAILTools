@@ -23,3 +23,6 @@ def createDSAILsheet(name: str):
     postsSheet.write(0, 2, "Reviews")
 
     return postsBook
+
+def printList(l: list):
+    print("/n".join(map(str, l)))
