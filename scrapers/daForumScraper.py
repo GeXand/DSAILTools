@@ -1,5 +1,5 @@
 #Simple scraper for drugabuse.com
-#Uses the pain pills page and scrapes all the first page posts into an .xlsx file
+#Uses the prescription drugs page and scrapes all the first page posts into an .xlsx file
 
 import requests
 import urllib.request

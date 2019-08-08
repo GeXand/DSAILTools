@@ -35,4 +35,4 @@ def postListToSheet(l: list, sheet: xlsxwriter.Workbook.worksheet_class):
     print("Sentences scraped: " + str(row))
 
 def printList(l: list):
-    print("/n".join(map(str, l)))
+    print("\n".join(map(str, l)))
