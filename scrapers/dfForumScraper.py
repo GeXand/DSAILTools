@@ -22,10 +22,7 @@ linkTags = soup.find_all("a", "PreviewTooltip")
 
 #Get all links from relevant a tags
 #Can probably find a way to optimize the change from html entity to a string
-links = []
-for linkTag in linkTags:
-    link = linkTag['href']
-    links.append(link)
+links = scrap.linksFromTags(linkTags)
 
 #Remove pinned threads since they aren't typical individual user posts
 for x in range(6):
@@ -33,8 +30,6 @@ for x in range(6):
 
 scrap.printList(links)
 print("Retrieved " + str(len(links)) + " links")
-
-
 
 allPostTags = []
 #Go to each link and prepare to scrape each page
@@ -46,8 +41,20 @@ for link in links:
     allPostTags.append(postTag)
 
 #Get all user posts as strings
-posts = []
-for postTag in allPostTags:
-    posts.append("".join(postTag.findAll(text=True)))
+posts = scrap.postTagsToStrings(allPostTags)
 
-scrap.printList(posts)
+#Strip out random new line junk cause of site formatting
+for i in range(len(posts)):
+    posts[i] = posts[i].strip("\n")
+
+splitPosts = scrap.splitPostBySentence(posts)
+
+#Create an excel file to store the posts
+postsBook, postsSheet = scrap.createDSAILsheet("dfScrape.xlsx")
+
+scrap.postListToSheet(splitPosts, postsSheet)
+
+postsBook.close()
+
+end = time.time()
+print("Time elapsed: " + str(end - start) + " seconds")
