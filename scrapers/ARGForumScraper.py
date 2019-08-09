@@ -37,9 +37,7 @@ for link in links:
     allPostTags.append(postTag)
 
 #Get all user posts as strings
-posts = []
-for postTag in allPostTags:
-    posts.append("".join(postTag.findAll(text=True)))
+posts = scrap.postTagsToStrings(allPostTags)
 
 #Remove trash generated from signatures
 for post in posts:
