@@ -12,38 +12,43 @@ import scrapers.scrapeUtils as scrap
 
 start = time.time()
 
-#Dummy test url for now
-url = "https://drugs-forum.com/forums/opiate-opioid-addiction.281/"
-response = requests.get(url)
+allPostTags =[]
 
-#Get all a tags marked as forum post links
-soup = BeautifulSoup(response.text, "html.parser")
-linkTags = soup.find_all("a", "PreviewTooltip")
+for i in range(1, 6):
+    url = "https://drugs-forum.com/forums/opiate-opioid-addiction.281/page-{}".format(i)
+    response = requests.get(url)
 
-#Get all links from relevant a tags
-#Can probably find a way to optimize the change from html entity to a string
-links = scrap.linksFromTags(linkTags)
+    # Get all a tags marked as forum post links
+    soup = BeautifulSoup(response.text, "html.parser")
+    linkTags = soup.find_all("a", "PreviewTooltip")
 
-#Remove pinned threads since they aren't typical individual user posts
-for x in range(6):
-    links.pop(0)
+    # Get all links from relevant a tags
+    # Can probably find a way to optimize the change from html entity to a string
+    links = scrap.linksFromTags(linkTags)
 
-scrap.printList(links)
-print("Retrieved " + str(len(links)) + " links")
+    # Remove pinned threads since they aren't typical individual user posts
 
-allPostTags = []
-#Go to each link and prepare to scrape each page
-for link in links:
-    curSoup = BeautifulSoup(requests.get("https://drugs-forum.com/" + link).text, "html.parser")
-    #Get only the first tag that contains a user post
-    #Most replies don't give the information we need so we just visit the first link
-    postTag = curSoup.find("blockquote", "messageText")
-    allPostTags.append(postTag)
+    if i == 1:
+        for x in range(6):
+            links.pop(0)
 
-#Get all user posts as strings
+    scrap.printList(links)
+    print("Retrieved " + str(len(links)) + " links")
+
+    # Go to each link and prepare to scrape each page
+    for link in links:
+        curSoup = BeautifulSoup(requests.get("https://drugs-forum.com/" + link).text, "html.parser")
+        # Get only the first tag that contains a user post
+        # Most replies don't give the information we need so we just visit the first link
+        postTag = curSoup.find("blockquote", "messageText")
+        allPostTags.append(postTag)
+
+    time.sleep(0.2)
+
+# Get all user posts as strings
 posts = scrap.postTagsToStrings(allPostTags)
 
-#Strip out random new line junk cause of site formatting
+# Strip out random new line junk cause of site formatting
 for i in range(len(posts)):
     posts[i] = posts[i].strip("\n")
 
