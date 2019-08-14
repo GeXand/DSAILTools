@@ -45,7 +45,15 @@ def postListToSheet(l: list, sheet: xlsxwriter.Workbook.worksheet_class):
     row = 1
     for post in l:
         for sentence in post:
-            sheet.write(row, col, sentence)
+            if post.index(sentence) == 0:
+                sheet.write(row, col, '"' + sentence)
+            elif post.index(sentence) == len(post) - 1:
+                sheet.write(row, col, sentence + '"')
+            else:
+                sheet.write(row, col, sentence)
+
+
+
             row += 1
 
     print("Sentences scraped: " + str(row))
