@@ -17,7 +17,7 @@ url = "https://www.addictionrecoveryguide.org/message_board/index.php?s=d67a941c
 response = requests.get(url)
 
 #Get all a tags marked as forum post links
-soup = BeautifulSoup(response.text, "html.parser")
+soup = BeautifulSoup(response.text, "lxml")
 linkTags = soup.find_all("a", "linkthru")
 
 #Get all links from relevant a tags
@@ -30,7 +30,7 @@ print("Retrieved " + str(len(links)) + " links")
 allPostTags = []
 #Go to each link and prepare to scrape each page
 for link in links:
-    curSoup = BeautifulSoup(requests.get(link).text, "html.parser")
+    curSoup = BeautifulSoup(requests.get(link).text, "lxml")
     #Get only the first tag that contains a user post
     #Most replies don't give the information we need so we just visit the first link
     postTag = curSoup.find("span", "postcolor")

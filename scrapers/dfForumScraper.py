@@ -15,11 +15,11 @@ start = time.time()
 allPostTags =[]
 
 for i in range(1, 6):
-    url = "https://drugs-forum.com/forums/opiate-opioid-addiction.281/page-{}".format(i)
+    url = "https://drugs-forum.com/forums/opiate-opioid-addiction.281/page-" + str(i)
     response = requests.get(url)
 
     # Get all a tags marked as forum post links
-    soup = BeautifulSoup(response.text, "html.parser")
+    soup = BeautifulSoup(response.text, "lxml")
     linkTags = soup.find_all("a", "PreviewTooltip")
 
     # Get all links from relevant a tags
@@ -37,7 +37,7 @@ for i in range(1, 6):
 
     # Go to each link and prepare to scrape each page
     for link in links:
-        curSoup = BeautifulSoup(requests.get("https://drugs-forum.com/" + link).text, "html.parser")
+        curSoup = BeautifulSoup(requests.get("https://drugs-forum.com/" + link).text, "lxml")
         # Get only the first tag that contains a user post
         # Most replies don't give the information we need so we just visit the first link
         postTag = curSoup.find("blockquote", "messageText")
